@@ -1,7 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.weatherapp.ui.theme
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,15 +9,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Brightness5
+import androidx.compose.material.icons.filled.Navigation
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -134,11 +137,12 @@ fun LoadingView() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
+
     ) {
         LottieAnimation(
             composition = composition,
             progress = progress,
-            modifier = Modifier.size(200.dp) // Animation size
+            modifier = Modifier.size(150.dp) // Animation size
         )
     }
 }
@@ -240,7 +244,8 @@ fun WeatherDetails(data: WeatherModel) {
         modifier = Modifier
             .fillMaxWidth().padding(bottom = 24.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -286,7 +291,7 @@ fun WeatherDetails(data: WeatherModel) {
                         modifier = Modifier
                             .size(90.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                            .background(Color.Cyan.copy(alpha = 0.1f))
                             .padding(8.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -305,48 +310,69 @@ fun WeatherDetails(data: WeatherModel) {
 
     LazyRow(
         modifier = Modifier
-            .fillMaxWidth() ,
-        horizontalArrangement = Arrangement.spacedBy(16.dp) // Spacing between items
+            .fillMaxWidth()
+            .height(250.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(listOf(
-            "Wind" to "${data.current.wind_kph} km/h",
-            "Humidity" to "${data.current.humidity}%",
-            "Pressure" to "${data.current.pressure_mb} mb",
-            "UV Index" to "${data.current.uv}",
-            "Visibility" to "${data.current.vis_km} km"
-        )) { (label, value) ->
-            WeatherDetailCard(label = label, value = value)
+            Triple("Wind", "${data.current.wind_kph} km/h", Icons.Default.Navigation),
+            Triple("Humidity", "${data.current.humidity}%", Icons.Default.WaterDrop),
+            Triple("Pressure", "${data.current.pressure_mb} mb", Icons.Default.Speed),
+            Triple("UV Index", "${data.current.uv}", Icons.Default.Brightness5),
+            Triple("Visibility", "${data.current.vis_km} km", Icons.Default.RemoveRedEye)
+        )) { (label, value, icon) ->
+            WeatherDetailCard(
+                label = label,
+                value = value,
+                icon = icon
+            )
         }
     }
 
+
     }
 
-
 @Composable
-fun WeatherDetailCard(label: String, value: String) {
+fun WeatherDetailCard(
+    label: String,
+    value: String,
+    icon: ImageVector
+) {
     Card(
         modifier = Modifier
-            .size(150.dp , 210.dp)
+            .width(150.dp)
+            .height(210.dp)
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp) ,
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.Black
+                color = Color.Black,
+                textAlign = TextAlign.Center
             )
+
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = Color.Black
+            )
+
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
+                color = Color.Gray,
+                textAlign = TextAlign.Center
             )
         }
     }
