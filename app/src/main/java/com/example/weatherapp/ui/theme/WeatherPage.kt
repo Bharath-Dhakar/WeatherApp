@@ -45,31 +45,33 @@ fun WeatherPage(viewModel: WeatherViewModel) {
     var city by remember { mutableStateOf("") }
     val weatherResult = viewModel.weatherResult.observeAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        WeatherSearchBar(
-            city = city,
-            onCityChange = { city = it },
-            onSearch = { viewModel.getData(city) }
-        )
+    WeatherAppTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            WeatherSearchBar(
+                city = city,
+                onCityChange = { city = it },
+                onSearch = { viewModel.getData(city) }
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        when (val result = weatherResult.value) {
-            is NetworkResponse.Error -> {
-                ErrorView(message = result.message)
+            when (val result = weatherResult.value) {
+                is NetworkResponse.Error -> {
+                    ErrorView(message = result.message)
+                }
+                NetworkResponse.Loading -> {
+                    LoadingView()
+                }
+                is NetworkResponse.Success -> {
+                    WeatherDetails(data = result.data)
+                }
+                null -> {}
             }
-            NetworkResponse.Loading -> {
-                LoadingView()
-            }
-            is NetworkResponse.Success -> {
-                WeatherDetails(data = result.data)
-            }
-            null -> {}
         }
     }
 }
